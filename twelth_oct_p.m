@@ -9,13 +9,14 @@ tau = 0.1 ;
 N_time =Tmax/tau ;
 K = input('put K')
 
+
+
+runs = 0;
+while(runs<20)
 %(Uniform distribution from zero to 2*pi)
 a=2*pi*rand(1,Nosc);
 %Normal distribution with mean = 0, std = 0.5
 w = random('Normal',0,0.5,1,Nosc);
-
-runs = 0;
-while(runs<20)
 ip = 1;    
 pmin = 0;
 alpha = 0.05;
@@ -79,4 +80,5 @@ figure(2)
 p = 0:delta_p:2*pi;
 plot(p,r_final);
 runs = runs + 1;
+pause;
 end
