@@ -8,7 +8,7 @@ Tmax=20;
 tau = 0.1 ;
 N_time =Tmax/tau ;
 K = input('put K')
-
+w = random('Normal',0,0.5,1,Nosc);
 
 
 runs = 0;
@@ -16,7 +16,7 @@ while(runs<20)
 %(Uniform distribution from zero to 2*pi)
 a=2*pi*rand(1,Nosc);
 %Normal distribution with mean = 0, std = 0.5
-w = random('Normal',0,0.5,1,Nosc);
+    
 ip = 1;    
 pmin = 0;
 alpha = 0.05;

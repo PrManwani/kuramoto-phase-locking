@@ -2,7 +2,7 @@
 %pulse coupling
 clear;
 
-Nosc= 1000;
+Nosc= 500;
 Tmax=20;
 tau = 0.1 ;
 N_time =Tmax/tau ;
@@ -23,7 +23,7 @@ w = random('Normal',0,0.5,1,Nosc);
 pmin = 0;
 pmin = mod(pmin,2*pi);
 %pulse end point, pmax
-pmax = 2*pi;
+pmax = 2*pi-0.001;
 pmax = mod(pmax,2*pi);
 %pulse time width
 psize = pmax-pmin;
