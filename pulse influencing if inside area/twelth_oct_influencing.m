@@ -76,4 +76,5 @@ while(K<=(Kmax))
 end
  
 K = 0:delta_K:Kmax;
+
 plot(K,r_final);

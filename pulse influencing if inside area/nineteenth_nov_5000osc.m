@@ -1,66 +1,62 @@
 %lop 6
 %pulse coupling influencing
-%varying pulse_width
-%width matters and not the starting point
+clear;
 
-Nosc= 1000;
-Tmax=10;
-tau = 0.1 ;
+Nosc= 5000;
+Tmax=200;
+tau = 0.01 ;
 N_time =Tmax/tau ;
-K = input('put K')
-w = random('Normal',0,0.5,1,Nosc);
-pmin = 0;
-alpha = 0.01;
-delta_p = alpha*2*pi;
 
-NP = round((2*pi)/delta_p);
-r_mean = zeros(NP+1,1);
-runs = 0;
-while(runs<20)
+K = 5;
+%loop start
+ik = 1;
 %(Uniform distribution from zero to 2*pi)
 a=2*pi*rand(1,Nosc);
 %Normal distribution with mean = 0, std = 0.5
-    
-ip = 1;    
+w = random('Normal',0,0.5,1,Nosc);
+%pulse starting point, pmin
 pmin = 0;
-psize = delta_p;
-%loop start
-r_final = zeros(NP+1,1);
+pmin = mod(pmin,2*pi);
+%pulse end point, pmax
+pmax = 0.2*2*pi;
+pmax = mod(pmax,2*pi);
+%pulse time width
+psize = pmax-pmin;
 %initializing count of osicllators pulsating
-count = zeros(NP,N_time-1);
-while(psize<=(2*pi))
-    
-    
-    pmin = 0;
-    pmax = psize;
+%count = zeros(NK,N_time);
     %Initializing for current K
     theta = zeros(N_time,Nosc);
     theta_dot = zeros(N_time,Nosc);
     r_cos = zeros(N_time,1);
     r_sin = zeros(N_time,1);
-    r = zeros(N_time,1);     
+    r = zeros(N_time,1);
+    count = zeros(N_time,1);
     %theta initialization    
     %r initialization
     for j = 1:Nosc
         theta(1,j)=a(j);
         theta(1,j) = mod(theta(1,j),2*pi);
         r_cos(1) = r_cos(1) + (1/Nosc)*cos(theta(1,j));
-        r_sin(1) = r_sin(1) + (1/Nosc)*sin(theta(1,j));
+        r_sin(1) = r_sin(1) + (1/Nosc)*sin(theta(1,j));        
+        if(theta(1,j) >= pmin && theta(1,j) <= pmax)
+            count(1) = count(1) + 1;
+        end
     end
-    r(1) = sqrt(r_cos(1)^2 + r_sin(1)^2);    
+    r(1) = sqrt(r_cos(1)^2 + r_sin(1)^2); 
+    p = zeros(Nosc,N_time-1);
     for t=1:(N_time-1)
+        t
         %pulsing oscillators should be inside pmin and pmax
         %defining array for pulsing
-        p = zeros(Nosc,1);
         for j = 1:Nosc
             if(theta(t,j) >= pmin && theta(t,j) <= pmax)
-                p(j) = 1;
-                count(ip,t) = count(ip,t) + 1;
+                p(j,t) = 1;
+                count(t+1) = count(t+1) + 1;
             end                
         end
         for i=1:Nosc            
             for j = 1:Nosc
-                theta_dot(t,i) = theta_dot(t,i) + p(j)*(K/Nosc)*sin(theta(t,j)-theta(t,i));         
+                theta_dot(t,i) = theta_dot(t,i) + p(j,t)*(K/Nosc)*sin(theta(t,j)-theta(t,i));         
             end
             theta_dot(t,i) =theta_dot(t,i) + w(i);            
             theta(t+1,i) = theta(t,i) + tau*theta_dot(t,i);
@@ -70,23 +66,6 @@ while(psize<=(2*pi))
         end %Euler Done                      
         r(t+1) = sqrt(r_cos(t+1)^2 + r_sin(t+1)^2);
     end
-    r_final(1) = r(1);       
-    psize = psize+delta_p;
-    ip = ip + 1;
-    r_final(ip)= r(mean(t-10,(t+1)));
-    
-end
-r_mean = r_mean + r_final;
-%hold on
-%figure(2) 
-%p = 0:delta_p:2*pi;
-%plot(p,r_final);
-runs = runs + 1
-
-end
-p = 0:delta_p:2*pi;
-r_mean = r_mean./runs;
-figure(1)
-plot(p,r_mean);
-figure(2)
-plot(count);
+   
+ c = std(theta_dot,0,2);
+ answer_to_lop = [c(1:19999),count(2:20000)];
